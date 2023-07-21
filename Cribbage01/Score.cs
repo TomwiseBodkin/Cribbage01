@@ -9,11 +9,12 @@
         }
         return ScoreHand(combo);
     }
-    public static IDictionary<ScoreType, int> ScoreHand(List<Card> cards) {
+    public static IDictionary<ScoreType, int> ScoreHand(List<Card> cards, Card cutCard) {
         Hand combo = new Hand();
         for (int i = 0; i < cards.Count(); i++) {
             combo.cards.Add(cards[i]);
         }
+        combo.cards.Add(cutCard);
         return ScoreHand(combo);
     }
     public static IDictionary<ScoreType, int> ScoreHand(Hand hand) {

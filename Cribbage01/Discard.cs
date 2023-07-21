@@ -1,12 +1,16 @@
-﻿public static class Discard {
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+public static class Discard {
     public static List<Card> ToCrib(Hand DealtHand, int numHand) {
         List<Card> cribCards = new List<Card>();
         IDictionary<ScoreType, int> toCribScore = new Dictionary<ScoreType, int>();
         IDictionary<List<Card>, double> potentialCribs = new Dictionary<List<Card>, double>();
 
         // lookup tables for statistical data on discards, calculated from averages for all possible card combinations
+        // Crib decimal averages for 5-card cribbage when hand discards A-K:
+        List<double> discard5 = new List<double> { 4.43, 4.67, 4.68, 4.71, 6.75, 4.68, 4.58, 4.45, 4.42, 4.42, 4.75, 4.27, 4.09 };
         // Crib decimal averages when pone discards AA-KK:
-        List<List<double>> listPoneFull = new List<List<double>> {
+        List<List<double>> listPoneFull6 = new List<List<double>> {
             new List<double> {6.07,5.07,5.17,5.74,6.06,4.93,4.95,4.92,4.66,4.46,4.72,4.41,4.34 },   // A
             new List<double> {5.07,6.43,7.34,5.44,6.17,5.13,5.12,5.03,4.82,4.64,4.91,4.60,4.53 },   // 2
             new List<double> {5.17,7.34,6.78,6.10,6.85,4.92,5.16,5.08,4.82,4.70,4.97,4.66,4.59 },   // 3
@@ -22,7 +26,7 @@
             new List<double> {4.34,4.53,4.59,4.43,7.31,4.25,4.38,4.31,4.13,3.99,4.90,4.56,5.72 } }; // K
 
         // Crib decimal averages when dealer discards AA-KK:
-        List<List<double>> listDealerFull = new List<List<double>> {
+        List<List<double>> listDealerFull6 = new List<List<double>> {
             new List<double> {5.26,4.18,4.47,5.45,5.48,3.80,3.73,3.70,3.33,3.37,3.65,3.39,3.42 },   // A
             new List<double> {4.18,5.67,6.97,4.51,5.44,3.87,3.81,3.58,3.63,3.51,3.79,3.52,3.55 },   // 2
             new List<double> {4.47,6.97,5.90,4.88,6.01,3.72,3.67,3.84,3.66,3.61,3.88,3.62,3.66 },   // 3
@@ -40,27 +44,52 @@
 
 
         List<List<Card>> cardCombos = Score.GetAllCombos(DealtHand.cards);
+
+        List<Card> testCutCards = new List<Card>();
+        foreach (Ordinal face in Enum.GetValues(typeof(Ordinal))) {
+            testCutCards.Add(new Card(SuitValue.Spades, face));
+        }
+
+        double discardAdjust = 0.0;
         for (int i = 0; i < cardCombos.Count; i++) {
-            if (cardCombos[i].Count == numHand) {
-                // Console.WriteLine($"{string.Join(",", cardCombos[i])}");
-                toCribScore = Score.ScoreHand(cardCombos[i]);
-                List<Card> tmpCribCards = DealtHand.cards.Except(cardCombos[i]).ToList();
-                if (DealtHand.isDealer) {
-                    double discardAdjust = listDealerFull[(int)tmpCribCards[0].OrdinalVal - 1][(int)tmpCribCards[1].OrdinalVal - 1];
-                    potentialCribs.Add(tmpCribCards, toCribScore[ScoreType.Total] + discardAdjust);
-                } else {
-                    double discardAdjust = listPoneFull[(int)tmpCribCards[0].OrdinalVal - 1][(int)tmpCribCards[1].OrdinalVal - 1];
-                    potentialCribs.Add(tmpCribCards, toCribScore[ScoreType.Total] - discardAdjust);
+            if (cardCombos[i].Count == numHand) { // only look at hands with X number of cards, set by game type (generally 4)
+                // Loop through all possible cut cards and average scores to maximize discard potential
+                double avgScore = 0.0;
+                foreach (Card testcard in testCutCards) {
+                    testcard.isCut = true;
+                    toCribScore = Score.ScoreHand(cardCombos[i], testcard);
+                    avgScore += toCribScore[ScoreType.Total];
                 }
-                // Console.WriteLine($"Test crib score: {toCribScore[ScoreType.Total]-discardAdjust:F2} for {string.Join(",", cardCombos[i])} => {string.Join(",", tmpCribCards)}");
+                avgScore /= testCutCards.Count;
+                List<Card> tmpCribCards = DealtHand.cards.Except(cardCombos[i]).ToList();
+                if (tmpCribCards.Count == 1) {
+                    if (DealtHand.isDealer) {
+                        discardAdjust = discard5[(int)tmpCribCards[0].OrdinalVal - 1];
+                        potentialCribs.Add(tmpCribCards, avgScore + discardAdjust);
+                    } else {
+                        discardAdjust = discard5[(int)tmpCribCards[0].OrdinalVal - 1];
+                        potentialCribs.Add(tmpCribCards, avgScore - discardAdjust);
+                    }
+                } else if (tmpCribCards.Count == 2) {
+                    if (DealtHand.isDealer) {
+                        discardAdjust = listDealerFull6[(int)tmpCribCards[0].OrdinalVal - 1][(int)tmpCribCards[1].OrdinalVal - 1];
+                        potentialCribs.Add(tmpCribCards, avgScore + discardAdjust);
+                    } else {
+                        discardAdjust = listPoneFull6[(int)tmpCribCards[0].OrdinalVal - 1][(int)tmpCribCards[1].OrdinalVal - 1];
+                        potentialCribs.Add(tmpCribCards, avgScore - discardAdjust);
+                    }
+                } else if (tmpCribCards.Count == 3) { // SUPER CRIBBAGE!!!
+                }
+                // Console.WriteLine($"Test crib score: {testcard.ToString()} {toCribScore[ScoreType.Total] - discardAdjust:F2} for {string.Join(",", cardCombos[i])} => {string.Join(",", tmpCribCards)}");
+
             }
         }
 
 
-        //Console.WriteLine();
+        Console.WriteLine();
         List<Card> finalCrib = potentialCribs.OrderByDescending(o => o.Value).First().Key;
         double finalCribScore = potentialCribs.OrderByDescending(o => o.Value).First().Value;
-        //Console.WriteLine($"Best score: {finalCribScore:F2} for {string.Join(",", DealtHand.cards)} " + $"=> {string.Join(",", finalCrib)}");
+        Console.WriteLine($"Best score: {finalCribScore:F2} for {string.Join(",", DealtHand.cards)} " + $"=> {string.Join(",", finalCrib)}");
 
         foreach (Card cCard in finalCrib) {
             DealtHand.cards.Remove(cCard);
