@@ -129,7 +129,8 @@
         score[ScoreType.Total] += score[ScoreType.Pair] + score[ScoreType.Fifteen] + score[ScoreType.Flush] + score[ScoreType.Straight] + score[ScoreType.Nobs];
         return score;
     }
-
+    // get all possible combinations from list. return list of lists
+    // originally from https://stackoverflow.com/a/40417765/21490058
     public static List<List<T>> GetAllCombos<T>(List<T> list) {
         int comboCount = (int)Math.Pow(2, list.Count) - 1;
         List<List<T>> result = new List<List<T>>();
