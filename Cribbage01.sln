@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cribbage01", "Cribbage01\Cribbage01.csproj", "{A137D983-EA71-4982-AEA6-3B232BAF7F36}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A137D983-EA71-4982-AEA6-3B232BAF7F36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A137D983-EA71-4982-AEA6-3B232BAF7F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A137D983-EA71-4982-AEA6-3B232BAF7F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A137D983-EA71-4982-AEA6-3B232BAF7F36}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1BD04D47-B7EC-4BB5-B4C4-571933042806}
+	EndGlobalSection
+EndGlobal
