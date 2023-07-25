@@ -95,7 +95,6 @@
 
     public class Hand {
         public List<Card> cards { get; set; } = new List<Card>();
-        public bool isDealer { get; set; } = false;
         public bool isCrib { get; set; } = false;
         public void AddCard(Card card) {
             cards.Add(card);

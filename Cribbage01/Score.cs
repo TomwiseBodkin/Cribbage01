@@ -7,6 +7,8 @@
         if (cutCard.cards.Count() == 1) {
             combo.cards.Add(cutCard.cards[0]);
         }
+        if (hand.isCrib)
+            combo.isCrib = true;
         return ScoreHand(combo);
     }
     public static IDictionary<ScoreType, int> ScoreHand(List<Card> cards, Card cutCard) {
@@ -78,6 +80,7 @@
 
         // score flushes
         int flushCnt = 0;
+        int numNCCrds = 0; // number of non-cut cards in hand
         SuitValue? suitValue = null;
         for (int i = 0; i < hand.cards.Count; i++) {
             if (!hand.cards[i].isCut) {
@@ -88,6 +91,7 @@
 
         for (int j = 0; j < hand.cards.Count(); j++) {
             if (!hand.cards[j].isCut) {
+                numNCCrds++; 
                 if (!hand.cards[j].Suit.Equals(suitValue)) {
                     flushCnt = 0;
                     break;
@@ -96,7 +100,7 @@
                 }
             }
         }
-        if (flushCnt > 0) {
+        if (flushCnt == numNCCrds) {
             for (int i = 0; i < hand.cards.Count; i++) {
                 if (hand.cards[i].isCut) {
                     if (hand.cards[i].Suit.Equals(suitValue)) {
@@ -106,7 +110,9 @@
                     }
                 }
             }
-            // Console.WriteLine($"Flush for {flushCnt}. {string.Join(",", hand.cards)}");
+            if (flushCnt > 0) {
+                Console.WriteLine($"Flush for {flushCnt}. {string.Join(",", hand.cards)}");
+            }
             score[ScoreType.Flush] = flushCnt;
         }
 

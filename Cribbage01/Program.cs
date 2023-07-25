@@ -11,27 +11,27 @@ public class Game {
     public void Run() {
         Random random = new Random();
         Deck deck = new Deck();
-        Hand playerHand = new Hand();
-        Hand compHand = new Hand();
+        Player player1 = new Player();
+        Player player2 = new Player();
         Hand crib = new Hand();
         Hand cutCard = new Hand();
-        IDictionary<ScoreType, int> pScore = new Dictionary<ScoreType, int>();
-        IDictionary<ScoreType, int> cScore = new Dictionary<ScoreType, int>();
         IDictionary<ScoreType, int> crScore = new Dictionary<ScoreType, int>();
 
         deck.ShuffleDeck(3);
         // deck.ShowCards();
 
-        playerHand.isDealer = true;
+        player1.isDealer = true;
         crib.isCrib = true;
 
         for (int i = 0; i < 6; i++) {
-            playerHand.AddCards(deck.PullCards(1));
-            compHand.AddCards(deck.PullCards(1));
+            player1.hand.AddCards(deck.PullCards(1));
+            player2.hand.AddCards(deck.PullCards(1));
         }
 
-        crib.AddCards(Discard.ToCrib(playerHand, 4));
-        crib.AddCards(Discard.ToCrib(compHand, 4));
+        player1.discards = Discard.ToCrib(player1, 4);
+        player2.discards = Discard.ToCrib(player2, 4);
+        crib.AddCards(player1.discards);
+        crib.AddCards(player2.discards);
 
         Console.WriteLine("Cut Card:");
         cutCard.AddCard(deck.PullCard(random.Next(deck.cards.Count)));
@@ -39,20 +39,17 @@ public class Game {
         cutCard.cards[0].isCut = true;
         Console.WriteLine();
 
-        Console.WriteLine("Player hand:");
-        playerHand.SortCards();
-        playerHand.ShowCards();
+        Console.WriteLine($"{player1.Name} hand:");
+        player1.SortCards();
+        player1.ShowCards();
+        player1.PointsScored(Score.ScoreHand(player1.hand, cutCard));
+        Console.WriteLine($"{player1.Name} score: {player1.totalScore}");
         Console.WriteLine();
-        pScore = Score.ScoreHand(playerHand, cutCard);
-        Console.WriteLine($"Player score: {pScore[ScoreType.Total]}");
-
-
-        Console.WriteLine("Computer hand:");
-        compHand.SortCards();
-        compHand.ShowCards();
-        Console.WriteLine();
-        cScore = Score.ScoreHand(compHand, cutCard);
-        Console.WriteLine($"Computer score: {cScore[ScoreType.Total]}");
+        Console.WriteLine($"{player2.Name} hand:");
+        player2.SortCards();
+        player2.ShowCards();
+        player2.PointsScored(Score.ScoreHand(player2.hand, cutCard));
+        Console.WriteLine($"{player2.Name} score: {player2.totalScore}");
         Console.WriteLine("Crib:");
         crib.SortCards();
         crib.ShowCards();

@@ -1,5 +1,5 @@
 ﻿public static class Discard {
-    public static List<Card> ToCrib(Hand DealtHand, int numHand) {
+    public static List<Card> ToCrib(Player player, int numHand) {
         List<Card> cribCards = new List<Card>();
         IDictionary<ScoreType, int> toCribScore = new Dictionary<ScoreType, int>();
         IDictionary<List<Card>, double> potentialCribs = new Dictionary<List<Card>, double>();
@@ -239,7 +239,7 @@
 
         };
 
-        List<List<Card>> cardCombos = Score.GetAllCombos(DealtHand.cards);
+        List<List<Card>> cardCombos = Score.GetAllCombos(player.hand.cards);
 
         List<Card> testCutCards = new List<Card>();
         foreach (Ordinal face in Enum.GetValues(typeof(Ordinal))) {
@@ -257,10 +257,10 @@
                     avgScore += toCribScore[ScoreType.Total];
                 }
                 avgScore /= testCutCards.Count;
-                List<Card> tmpCribCards = DealtHand.cards.Except(cardCombos[i]).ToList();
+                List<Card> tmpCribCards = player.hand.cards.Except(cardCombos[i]).ToList();
                 tmpCribCards.Sort((x, y) => x.OrdinalVal.CompareTo(y.OrdinalVal));
                 if (tmpCribCards.Count == 1) {
-                    if (DealtHand.isDealer) {
+                    if (player.isDealer) {
                         discardAdjust = discard5[(int)tmpCribCards[0].OrdinalVal - 1];
                         potentialCribs.Add(tmpCribCards, avgScore + discardAdjust);
                     } else {
@@ -269,7 +269,7 @@
                     }
                 } else if (tmpCribCards.Count == 2) {
                     tmpCribCards.OrderBy(s => s.OrdinalVal).ToList();
-                    if (DealtHand.isDealer) {
+                    if (player.isDealer) {
                         discardAdjust = listDealerFull6[(int)tmpCribCards[0].OrdinalVal - 1][(int)tmpCribCards[1].OrdinalVal - 1];
                         potentialCribs.Add(tmpCribCards, avgScore + discardAdjust);
                     } else {
@@ -279,7 +279,7 @@
                 } else if (tmpCribCards.Count == 3) { // SUPER CRIBBAGE!!!
                     // Console.WriteLine(string.Join(",", tmpCribCards));
                     discardAdjust = listFull9[(int)tmpCribCards[0].OrdinalVal - 1][(int)tmpCribCards[1].OrdinalVal - 1][(int)tmpCribCards[2].OrdinalVal - 1];
-                    if (DealtHand.isDealer) {
+                    if (player.isDealer) {
                         potentialCribs.Add(tmpCribCards, avgScore + discardAdjust);
                     } else {
                         potentialCribs.Add(tmpCribCards, avgScore - discardAdjust);
@@ -291,15 +291,15 @@
         }
 
 
-        Console.WriteLine();
+        // Console.WriteLine();
         List<Card> finalCrib = potentialCribs.OrderByDescending(o => o.Value).First().Key;
         double finalCribScore = potentialCribs.OrderByDescending(o => o.Value).First().Value;
 
-        DealtHand.cards.Sort((x, y) => x.OrdinalVal.CompareTo(y.OrdinalVal));
-        Console.WriteLine($"Best score: {finalCribScore:F2} for {string.Join(",", DealtHand.cards)} " + $"=> {string.Join(",", finalCrib)}");
+        player.hand.cards.Sort((x, y) => x.OrdinalVal.CompareTo(y.OrdinalVal));
+        // Console.WriteLine($"Best score: {finalCribScore:F2} for {string.Join(",", DealtHand.cards)} " + $"=> {string.Join(",", finalCrib)}");
 
         foreach (Card cCard in finalCrib) {
-            DealtHand.cards.Remove(cCard);
+            player.hand.cards.Remove(cCard);
             cribCards.Add(cCard);
         }
 
