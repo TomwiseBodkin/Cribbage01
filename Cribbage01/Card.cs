@@ -88,7 +88,7 @@
                     suitChar = "";
                     break;
             }
-            return $"{ordinalChar + suitChar} ";
+            return $"{ordinalChar + suitChar}";
         }
 
     }
