@@ -91,15 +91,16 @@
 
         for (int j = 0; j < hand.cards.Count(); j++) {
             if (!hand.cards[j].isCut) {
-                numNCCrds++; 
+                numNCCrds++;
                 if (!hand.cards[j].Suit.Equals(suitValue)) {
                     flushCnt = 0;
                     break;
                 } else {
                     flushCnt++;
                 }
-            }
+            } 
         }
+
         if (flushCnt == numNCCrds) {
             for (int i = 0; i < hand.cards.Count; i++) {
                 if (hand.cards[i].isCut) {
@@ -110,9 +111,9 @@
                     }
                 }
             }
-            if (flushCnt > 0) {
-                Console.WriteLine($"Flush for {flushCnt}. {string.Join(",", hand.cards)}");
-            }
+            //if (flushCnt > 0) {
+            //    Console.WriteLine($"Flush for {flushCnt}. {string.Join(",", hand.cards)}");
+            //}
             score[ScoreType.Flush] = flushCnt;
         }
 

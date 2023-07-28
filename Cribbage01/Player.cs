@@ -28,7 +28,7 @@ public class Player {
 
     public void PointsScored(IDictionary<ScoreType, int> pScore) {
         this.pScore = pScore;
-        totalScore += pScore[ScoreType.Total];
+        totalScore = pScore[ScoreType.Total];
     }
 
 }
