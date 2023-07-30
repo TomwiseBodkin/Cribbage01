@@ -4,7 +4,8 @@
     public int FaceValue { get; }
     public bool isCut { get; set; }
     internal int Index => (int)Suit * 13 + (int)OrdinalVal;
-    internal ulong BitMask => 1UL << (int)OrdinalVal << ((int)Suit << 4);
+    internal ulong BitMask => 1UL << (int)OrdinalVal << ((int)Suit << 4); // x << 4 == x * 16.
+    internal ulong BitMask2 => 1UL << (int)Suit << ((int)OrdinalVal << 2); // x << 4 == x * 16.
 
     public Card(SuitValue suit, Ordinal ordinal) {
         Suit = suit;
@@ -20,7 +21,6 @@
         }
 
     }
-
     public ConsoleColor cardColor() {
         ConsoleColor suitColor;
 
@@ -148,6 +148,23 @@ public class Hand {
             }
         }
     }
+
+    public ulong HandBits() {
+        ulong total = 0UL;
+        foreach (Card card in cards) {
+            total |= card.BitMask;
+        }
+        return total;
+    }
+    public ulong HandBits2() {
+        ulong total = 0UL;
+        foreach (Card card in cards) {
+            total |= card.BitMask2;
+        }
+        return total;
+    }
+
+
 
 }
 
