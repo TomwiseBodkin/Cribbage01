@@ -5,7 +5,7 @@
     public bool isCut { get; set; }
     internal int Index => (int)Suit * 13 + (int)OrdinalVal;
     internal ulong BitMask => 1UL << (int)OrdinalVal << ((int)Suit << 4); // x << 4 == x * 16.
-    internal ulong BitMask2 => 1UL << (int)Suit << ((int)OrdinalVal << 2); // x << 4 == x * 16.
+    internal ulong BitMaskRank => 1UL << (int)Suit << ((int)OrdinalVal << 2); 
 
     public Card(SuitValue suit, Ordinal ordinal) {
         Suit = suit;
@@ -93,7 +93,13 @@
         }
         return $"{ordinalChar + suitChar}";
     }
-
+    public void ShowCard() {
+        Console.ForegroundColor = cardColor();
+        Console.BackgroundColor = ConsoleColor.White;
+        Console.Write(ToString());
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.BackgroundColor = ConsoleColor.Black;
+    }
 }
 
 public class Hand {
@@ -149,6 +155,7 @@ public class Hand {
         }
     }
 
+    // 64-bit int grouped by suit
     public ulong HandBits() {
         ulong total = 0UL;
         foreach (Card card in cards) {
@@ -156,10 +163,12 @@ public class Hand {
         }
         return total;
     }
-    public ulong HandBits2() {
+
+    // 64-bit int grouped by rank
+    public ulong HandBitsRank() {
         ulong total = 0UL;
         foreach (Card card in cards) {
-            total |= card.BitMask2;
+            total |= card.BitMaskRank;
         }
         return total;
     }
