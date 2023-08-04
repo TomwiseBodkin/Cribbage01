@@ -244,7 +244,7 @@ public static class Discard {
                 double avgScore = 0.0;
                 foreach (Card testcard in testCutCards) {
                     testcard.isCut = true;
-                    toCribScore = Score.ScoreHand(cardCombos[i], testcard);
+                    toCribScore = Score.ScoreHandFast(cardCombos[i], testcard);
                     avgScore += toCribScore[ScoreType.Total];
                 }
                 avgScore /= testCutCards.Count;
