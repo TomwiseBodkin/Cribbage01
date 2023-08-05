@@ -3,6 +3,89 @@
 public class GenerateDiscardList {
     public GenerateDiscardList() { }
 
+    public void Run4ProperBitwise() {
+        int pScore;
+        List<int> count = new List<int>();
+        List<double> scores = new List<double>();
+        List<List<int>> allCounts = new List<List<int>>();
+        List<List<int>> allScores = new List<List<int>>();
+        List<List<double>> allAvgScores = new List<List<double>>();
+        ulong card1Bits;
+        ulong card2Bits;
+        ulong card3Bits;
+        ulong card4Bits;
+        ulong card5Bits;
+
+        // deck.ShowCards();
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j <= i; j++) {
+                scores.Add(0.0);
+                count.Add(0);
+            }
+            List<double> tmpAvgScore = new List<double>(scores);
+            List<int> tmpCount = new List<int>(count);
+            List<int> tmpScore = new List<int>(count);
+            allScores.Add(tmpScore);
+            allAvgScores.Add(tmpAvgScore);
+            allCounts.Add(tmpCount);
+            scores.Clear();
+            count.Clear();
+        }
+        Console.Clear();
+        ListOut.PrintSparseInt(allScores);
+        ListOut.PrintSparseInt(allCounts);
+
+        for (int i = 0; i < 52; i++) {
+            card1Bits = 1UL << (i % 13) << (i / 13) * 16;
+            for (int j = 0; j < 52; j++) {
+                card2Bits = 1UL << (j % 13) << (j / 13) * 16;
+                if ((card2Bits ^ card1Bits) == 0) {
+                    continue;
+                }
+                //ListOut.BitHandRankOut(card1Bits | card2Bits);
+                for (int k = 0; k < 52; k++) {
+                    card3Bits = 1UL << (k % 13) << (k / 13) * 16;
+                    if (((card3Bits ^ card1Bits) == 0) || ((card3Bits ^ card2Bits) == 0)) {
+                        continue;
+                    }
+                    for (int l = 0; l < 52; l++) {
+                        card4Bits = 1UL << (l % 13) << (l / 13) * 16;
+                        if (((card4Bits ^ card1Bits) == 0) || ((card4Bits ^ card2Bits) == 0) || ((card4Bits ^ card3Bits) == 0)) {
+                            continue;
+                        }
+                        for (int m = 0; m < 52;  m++) {
+                            card5Bits = 1UL << (m % 13) << (m / 13) * 16;
+                            if (((card5Bits ^ card1Bits) == 0) || ((card5Bits ^ card2Bits) == 0) || ((card5Bits ^ card3Bits) == 0) || ((card5Bits ^ card4Bits) == 0)) {
+                                continue;
+                            }
+                            pScore = Score.ScoreHandFasterer((card1Bits | card2Bits | card3Bits | card4Bits), card5Bits, false);
+                            if ((j % 13) > (i % 13)) {
+                                allScores[j % 13][i % 13] += pScore;
+                                allCounts[j % 13][i % 13]++;
+                            } else {
+                                allScores[i % 13][j % 13] += pScore;
+                                allCounts[i % 13][j % 13]++;
+                            }
+                        }
+                    }
+                }
+            }
+            Console.Clear();
+            ListOut.PrintSparseInt(allScores);
+            ListOut.PrintSparseInt(allCounts);
+        }
+        int totalCount = 0;
+        for (int i = 0; i < allScores.Count; i++) {
+            for (int j = 0; j < allScores[i].Count; j++) {
+                allAvgScores[i][j] = (double)allScores[i][j] / (double)allCounts[i][j];
+                totalCount += allCounts[i][j];
+            }
+        }
+        ListOut.PrintSparse(allAvgScores);
+        Console.WriteLine(totalCount);
+
+    }
+
     public void Run4Proper() {
         Random random = new Random();
         Deck deck = new Deck();
@@ -58,7 +141,7 @@ public class GenerateDiscardList {
                             cutCard = deck.cards[n];
                             cutCard.isCut = true;
                             // Console.WriteLine(calcHand.cards.Count);
-                            pScore = Score.ScoreHandFaster(calcHand,cutCard);
+                            pScore = Score.ScoreHandFaster(calcHand, cutCard);
                             cutCard.isCut = false;
                             if ((int)deck.cards[j].OrdinalVal > (int)deck.cards[i].OrdinalVal) {
                                 allScores[(int)deck.cards[j].OrdinalVal][(int)deck.cards[i].OrdinalVal] += pScore;

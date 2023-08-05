@@ -21,13 +21,13 @@ public class TestScore {
         Player2.hand.AddCard(new Card(SuitValue.Spades, Ordinal.Eight));
         Player2.hand.AddCard(new Card(SuitValue.Spades, Ordinal.Nine));
 
-        var p1Bits = Player1.hand.HandBits();
-        var p2Bits = Player2.hand.HandBits();
+        p1Bits = Player1.hand.HandBits();
+        p2Bits = Player2.hand.HandBits();
 
         cutCard = new Card(SuitValue.Clubs, Ordinal.Six);
         cutCard.isCut = true;
 
-        var cutBits = cutCard.BitMask;
+        cutBits = cutCard.BitMask;
     }
 
     public void Run() {
@@ -41,6 +41,8 @@ public class TestScore {
         var test1 = OldScore();
         Console.WriteLine("New: ");
         var test2 = NewScore();
+        Console.WriteLine("New+: ");
+        var test3 = NewScore2();
     }
     [Benchmark]
     public int OldScore() {
@@ -53,13 +55,21 @@ public class TestScore {
 
     [Benchmark]
     public int NewScore() {
-        var score = Score.ScoreHandFasterer(p1Bits, cutBits, false);
+        var score = Score.ScoreHandFaster(Player1.hand, cutCard);
         //Console.WriteLine($"Score: {score}");
-        score = Score.ScoreHandFasterer(p1Bits, cutBits, false);
+        score = Score.ScoreHandFaster(Player2.hand, cutCard);
         //Console.WriteLine($"Score: {score}");
         return 0;
     }
 
+    [Benchmark]
+    public int NewScore2() {
+        var score = Score.ScoreHandFasterer(p1Bits, cutBits, false);
+        //Console.WriteLine($"Score: {score}");
+        score = Score.ScoreHandFasterer(p2Bits, cutBits, false);
+        //Console.WriteLine($"Score: {score}");
+        return 0;
+    }
 
 
 }

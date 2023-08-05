@@ -3,8 +3,14 @@ internal class Program {
     private static void Main() {
         //Game game = new Game();
         //game.Run();
+        //var watch = System.Diagnostics.Stopwatch.StartNew();
         //GenerateDiscardList generateDiscardList = new GenerateDiscardList();
         //generateDiscardList.Run4Proper();
+        //generateDiscardList.Run4ProperBitwise();
+
+        //watch.Stop();
+        //var elapsedTime = watch.Elapsed;
+        //Console.WriteLine(elapsedTime.ToString());
 
         //TestScore testScore = new TestScore();
         //testScore.Run();
