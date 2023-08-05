@@ -47,7 +47,7 @@ public static class BitOps {
         Console.WriteLine($"Popcount S => {BitOperations.PopCount(spades)}");
     }
     public static bool IsSingleSuit(ulong handMask) =>
-        (handMask > 1) &&
+        (handMask > 1) &
         (handMask & Bits0To15) == handMask |
         (handMask & Bits16To31) == handMask |
         (handMask & Bits32To47) == handMask |

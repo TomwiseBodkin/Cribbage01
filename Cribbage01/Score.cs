@@ -47,12 +47,7 @@ public static class Score {
         score[ScoreType.Pair] = ScorePairsBit(combo.HandBitsRank());
 
         // score fifteens
-        List<List<Card>> cardCombos = GetAllCombos(combo.cards);
-        for (int i = 0; i < cardCombos.Count; i++) {
-            if (cardCombos[i].Count > 1 && cardCombos[i].Sum(x => x.FaceValue) == 15) {
-                score[ScoreType.Fifteen] += 2;
-            }
-        }
+        score[ScoreType.Fifteen] = ScoreFifteensBit(combo.HandBitsRank());
 
         // score runs
         score[ScoreType.Straight] = ScoreRunsBits(testBitC, combo.HandBitsRank());
@@ -89,6 +84,72 @@ public static class Score {
 
 
         score[ScoreType.Total] += score[ScoreType.Pair] + score[ScoreType.Fifteen] + score[ScoreType.Flush] + score[ScoreType.Straight] + score[ScoreType.Nobs];
+        return score;
+    }
+
+    public static int ScoreHandFaster(Hand? hand, Card? cutCard) {
+        var score = 0;
+        Hand combo = new Hand();
+        var testBit = 0UL;
+        var testBitC = 0UL;
+        var testBitCRank = 0UL;
+        var testBitCut = 0UL;
+
+        if (hand != null) {
+            testBit = hand.HandBits();
+            for (int i = 0; i < hand.cards.Count; i++) {
+                combo.cards.Add(hand.cards[i]);
+            }
+            if (hand.isCrib)
+                combo.isCrib = true;
+        }
+        if (cutCard != null) {
+            combo.cards.Add(cutCard);
+            testBitCut = cutCard.BitMask;
+        }
+        testBitC = combo.HandBits();
+        testBitCRank = combo.HandBitsRank();
+
+
+        // score pairs
+        score += ScorePairsBit(testBitCRank);
+
+        // score fifteens
+        score += ScoreFifteensBit(testBitCRank);
+
+        // score runs
+        score += ScoreRunsBits(testBitC, testBitCRank);
+
+        // score flushes
+        if (hand != null) {
+            if (hand.isCrib) {
+                if (BitOps.IsSingleSuit(testBitC)) {
+                    score += combo.cards.Count;
+                }
+            } else {
+                if (BitOps.IsSingleSuit(testBitC)) {
+                    score += combo.cards.Count;
+                } else if (BitOps.IsSingleSuit(testBit)) {
+                    score += hand.cards.Count;
+                }
+            }
+        }
+
+        // score nobs
+        var suitInt = 0;
+        while (testBitCut > 0) {
+            if ((testBitCut & 0x000000000000ffff) > 0) {
+                break;
+            }
+            testBitCut >>= 16;
+            suitInt++;
+        }
+
+        if (((testBit >>= (suitInt * 16)) & 0b0000010000000000) > 0) {
+            // Console.WriteLine($"One for his Nobs!");
+            score += 1;
+        }
+
         return score;
     }
 
@@ -324,10 +385,44 @@ public static class Score {
         return score;
     }
 
+    public static int ScoreFifteens(Hand hand) {
+        var score = 0;
+        List<List<Card>> cardCombos = GetAllCombos(hand.cards);
+        for (int i = 0; i < cardCombos.Count; i++) {
+            if (cardCombos[i].Count > 1 && cardCombos[i].Sum(x => x.FaceValue) == 15) {
+                score += 2;
+            }
+        }
+        return score;
+    }
+    public static int ScoreFifteensBit(ulong valueRank) {
+        // marginally bitwise
+        var score = 0;
+        var count = 1;
+        var result = new List<int>();
+        while (valueRank > 0) {
+            var maskValue = valueRank & Bits00To03;
+            var numPairs = BitOps.CountSetBits(maskValue);
+            while (numPairs-- > 0) {
+                result.Add((count > 10) ? 10 : count);
+            }
+            count++;
+            valueRank >>= 4;
+        }
+        var result2 = GetAllCombos<int>(result);
+        foreach (List<int> subresult in result2) {
+            if (subresult.Sum() == 15) {
+                //Console.WriteLine(string.Join(",", subresult));
+                score += 2;
+            }
+        }
+        return score;
+    }
+
     // get all possible combinations from list. return list of lists
     // originally from https://stackoverflow.com/a/40417765/21490058
     public static List<List<T>> GetAllCombos<T>(List<T> list) {
-        int comboCount = (int)Math.Pow(2, list.Count) - 1;
+        int comboCount = (1 << list.Count) - 1;
         List<List<T>> result = new List<List<T>>();
         for (int i = 1; i < comboCount + 1; i++) {
             // make each combo here

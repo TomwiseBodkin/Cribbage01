@@ -1,5 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 internal class Program {
     private static void Main() {
         Game game = new Game();
@@ -32,13 +31,13 @@ public class Game {
         player1.isDealer = true;
         crib.isCrib = true;
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 6; i++) {
             player1.hand.AddCards(deck.PullCards(1));
             player2.hand.AddCards(deck.PullCards(1));
         }
 
-        player1.discards = Discard.ToCrib(player1, 6);
-        player2.discards = Discard.ToCrib(player2, 6);
+        player1.discards = Discard.ToCrib(player1, 4);
+        player2.discards = Discard.ToCrib(player2, 4);
         crib.AddCards(player1.discards);
         crib.AddCards(player2.discards);
 
@@ -80,57 +79,6 @@ public class Game {
         deck.AddCard(cutCard);
 
     }
-}
-
-public class TestScore {
-    Player Player1 { get; }
-    Player Player2 { get; }
-    Card cutCard { get; }
-    public TestScore() {
-        Player1 = new Player();
-        Player2 = new Player();
-
-        Player1.hand.AddCard(new Card(SuitValue.Spades, Ordinal.Five));
-        Player1.hand.AddCard(new Card(SuitValue.Hearts, Ordinal.Five));
-        Player1.hand.AddCard(new Card(SuitValue.Spades, Ordinal.Four));
-        Player1.hand.AddCard(new Card(SuitValue.Spades, Ordinal.Six));
-
-        Player2.hand.AddCard(new Card(SuitValue.Spades, Ordinal.Seven));
-        Player2.hand.AddCard(new Card(SuitValue.Hearts, Ordinal.Seven));
-        Player2.hand.AddCard(new Card(SuitValue.Spades, Ordinal.Eight));
-        Player2.hand.AddCard(new Card(SuitValue.Spades, Ordinal.Nine));
-
-
-        cutCard = new Card(SuitValue.Clubs, Ordinal.Six);
-        cutCard.isCut = true;
-    }
-
-    public void Run() {
-        Player1.hand.ShowCards();
-        Console.WriteLine();
-        Player2.hand.ShowCards();
-        Console.WriteLine();
-        cutCard.ShowCard();
-        Console.WriteLine();
-        //var test1 = OldScore();
-        //var test2 = NewScore();
-    }
-    [Benchmark]
-    public int OldScore() {
-        Score.ScoreHandSimple(Player1.hand, cutCard);
-        Score.ScoreHandSimple(Player2.hand, cutCard);
-        return 0;
-    }
-
-    [Benchmark]
-    public int NewScore() {
-        Score.ScoreHandFast(Player1.hand, cutCard);
-        Score.ScoreHandFast(Player2.hand, cutCard);
-        return 0;
-    }
-
-
-
 }
 
 
