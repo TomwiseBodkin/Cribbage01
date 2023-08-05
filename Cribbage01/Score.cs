@@ -152,6 +152,54 @@ public static class Score {
 
         return score;
     }
+    public static int ScoreHandFasterer(ulong handBits, ulong cutCardBits, bool isCrib) {
+        var score = 0;
+        var testBit = handBits;
+        var testBitC = handBits | cutCardBits;
+        var testBitCRank = BitOps.SuitToRankOrder(testBitC);
+        var testBitCut = cutCardBits;
+
+
+        // score pairs
+        score += ScorePairsBit(testBitCRank);
+
+        // score fifteens
+        score += ScoreFifteensBit(testBitCRank);
+
+        // score runs
+        score += ScoreRunsBits(testBitC, testBitCRank);
+
+        // score flushes
+        if (isCrib) {
+            if (BitOps.IsSingleSuit(testBitC)) {
+                score += BitOps.CountSetBits(testBitC);
+            }
+        } else {
+            if (BitOps.IsSingleSuit(testBitC)) {
+                score += BitOps.CountSetBits(testBitC);
+            } else if (BitOps.IsSingleSuit(testBit)) {
+                score += BitOps.CountSetBits(testBit);
+            }
+        }
+
+
+        // score nobs
+        var suitInt = 0;
+        while (testBitCut > 0) {
+            if ((testBitCut & 0x000000000000ffff) > 0) {
+                break;
+            }
+            testBitCut >>= 16;
+            suitInt++;
+        }
+
+        if (((testBit >>= (suitInt * 16)) & 0b0000010000000000) > 0) {
+            // Console.WriteLine($"One for his Nobs!");
+            score += 1;
+        }
+
+        return score;
+    }
 
     public static IDictionary<ScoreType, int> ScoreHandSimple(Hand hand, Card cutCard) {
         Hand combo = new Hand();

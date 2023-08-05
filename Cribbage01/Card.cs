@@ -113,6 +113,13 @@ public class Hand {
             AddCard(card0);
         }
     }
+    public void PutCard(Card card, int i) {
+        // need to ensure that cards.Count is > 0 or return null
+        if (i < 0 || i > cards.Count) {
+            i = 0;
+        }
+        cards.Insert(i, card);
+    }
     public Card PullCard(int i) {
         // need to ensure that cards.Count is > 0 or return null
         if (i < 0 || i >= cards.Count) {

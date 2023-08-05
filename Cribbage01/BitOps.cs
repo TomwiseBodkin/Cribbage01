@@ -7,7 +7,7 @@ public static class BitOps {
     private const ulong Bits32To47 = 0x0000FFFF00000000;
     private const ulong Bits48To63 = 0xFFFF000000000000;
 
-    
+
 
     public static ulong FlattenOR16(ulong value) {
         value |= (value >> 32);
@@ -77,5 +77,23 @@ public static class BitOps {
 
         return count;
     }
+    public static ulong SuitToRankOrder(ulong value) {
+        var spades = SpacedOut(value & Bits0To15);
+        var hearts = SpacedOut((value & Bits16To31) >> 16);
+        var diamonds = SpacedOut((value & Bits32To47) >> 32);
+        var clubs = SpacedOut((value & Bits48To63) >> 48);
+
+        return spades | (hearts << 1) | (diamonds << 2) | (clubs << 3);
+    }
+
+    private static ulong SpacedOut(ulong value) {
+        ulong x = value &     0x000000000000FFFFL;
+        x = (x | (x << 24)) & 0x000000FF000000FFL;
+        x = (x | (x << 12)) & 0x000F000F000F000FL;
+        x = (x | (x << 6)) &  0x0303030303030303L;
+        x = (x | (x << 3)) &  0x1111111111111111L;
+        return x;
+    }
+
 }
 

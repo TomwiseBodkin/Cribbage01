@@ -1,12 +1,14 @@
 ﻿using BenchmarkDotNet.Running;
 internal class Program {
     private static void Main() {
-        Game game = new Game();
-        game.Run();
+        //Game game = new Game();
+        //game.Run();
+        //GenerateDiscardList generateDiscardList = new GenerateDiscardList();
+        //generateDiscardList.Run4Proper();
 
         //TestScore testScore = new TestScore();
         //testScore.Run();
-        //var summary = BenchmarkRunner.Run<TestScore>();
+        var summary = BenchmarkRunner.Run<TestScore>();
     }
 }
 
@@ -66,9 +68,6 @@ public class Game {
         Console.WriteLine();
         crScore = Score.ScoreHandFast(crib, cutCard);
         Console.WriteLine($"Crib score: {crScore[ScoreType.Total]}");
-
-        Console.WriteLine();
-
 
         Console.WriteLine();
 
