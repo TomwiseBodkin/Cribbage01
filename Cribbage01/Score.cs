@@ -50,7 +50,7 @@ public static class Score {
         score[ScoreType.Fifteen] = ScoreFifteensBit(combo.HandBitsRank());
 
         // score runs
-        score[ScoreType.Straight] = ScoreRunsBits(testBitC, combo.HandBitsRank());
+        score[ScoreType.Straight] = ScoreRunsBits(testBitC);
 
         // score flushes
         if (hand != null) {
@@ -91,8 +91,6 @@ public static class Score {
         var score = 0;
         Hand combo = new Hand();
         var testBit = 0UL;
-        var testBitC = 0UL;
-        var testBitCRank = 0UL;
         var testBitCut = 0UL;
 
         if (hand != null) {
@@ -107,8 +105,8 @@ public static class Score {
             combo.cards.Add(cutCard);
             testBitCut = cutCard.BitMask;
         }
-        testBitC = combo.HandBits();
-        testBitCRank = combo.HandBitsRank();
+        var testBitC = combo.HandBits();
+        var testBitCRank = combo.HandBitsRank();
 
 
         // score pairs
@@ -118,7 +116,7 @@ public static class Score {
         score += ScoreFifteensBit(testBitCRank);
 
         // score runs
-        score += ScoreRunsBits(testBitC, testBitCRank);
+        score += ScoreRunsBits(testBitC);
 
         // score flushes
         if (hand != null) {
@@ -167,7 +165,7 @@ public static class Score {
         score += ScoreFifteensBit(testBitCRank);
 
         // score runs
-        score += ScoreRunsBits(testBitC, testBitCRank);
+        score += ScoreRunsBits(testBitC);
 
         // score flushes
         if (isCrib) {
@@ -203,7 +201,7 @@ public static class Score {
 
     public static IDictionary<ScoreType, int> ScoreHandSimple(Hand hand, Card cutCard) {
         Hand combo = new Hand();
-        for (int i = 0; i < hand.cards.Count(); i++) {
+        for (int i = 0; i < hand.cards.Count; i++) {
             combo.cards.Add(hand.cards[i]);
         }
         combo.cards.Add(cutCard);
@@ -221,8 +219,8 @@ public static class Score {
         score.Add(ScoreType.Nobs, 0);
 
         // score pairs
-        for (int i = 0; i < hand.cards.Count(); i++) {
-            for (int j = i + 1; j < hand.cards.Count(); j++) {
+        for (int i = 0; i < hand.cards.Count; i++) {
+            for (int j = i + 1; j < hand.cards.Count; j++) {
                 if (hand.cards[j].OrdinalVal == hand.cards[i].OrdinalVal) {
                     score[ScoreType.Pair] += 2;
                     // Console.WriteLine($"Pair for {score[ScoreType.Pair]}");
@@ -279,7 +277,7 @@ public static class Score {
             }
         }
 
-        for (int j = 0; j < hand.cards.Count(); j++) {
+        for (int j = 0; j < hand.cards.Count; j++) {
             if (!hand.cards[j].isCut) {
                 if (!hand.cards[j].Suit.Equals(suitValue)) {
                     flushCnt = 0;
@@ -305,13 +303,13 @@ public static class Score {
 
         // score nobs
         SuitValue? nobSuit = null;
-        for (int i = 0; i < hand.cards.Count(); i++) {
+        for (int i = 0; i < hand.cards.Count; i++) {
             if (hand.cards[i].isCut) {
                 nobSuit = hand.cards[i].Suit;
             }
         }
         if (nobSuit is SuitValue) {
-            for (int i = 0; i < hand.cards.Count(); i++) {
+            for (int i = 0; i < hand.cards.Count; i++) {
                 if (!hand.cards[i].isCut && hand.cards[i].OrdinalVal == Ordinal.Jack && hand.cards[i].Suit == nobSuit) {
                     // Console.WriteLine($"One for his Nobs! {hand.cards[i].ToString()}");
                     score[ScoreType.Nobs] += 1;
@@ -355,10 +353,11 @@ public static class Score {
         return runScore;
     }
 
-    public static int ScoreRunsBits(ulong value, ulong valueRank) { // pass Handbits => grouped by suit, Handbits2 => grouped by rank
+    public static int ScoreRunsBits(ulong value) { // pass Handbits => grouped by suit, Handbits2 => grouped by rank
         var shortValue = BitOps.FlattenOR16(value);
         var runScore = 0;
 
+        var valueRank = BitOps.SuitToRankOrder(value);
         if (BitOps.ConsecutiveSetBits(shortValue) > 2) {
             // need to check for double, triple, etc (i.e., overlap) runs
             var numCardsByRank = CountPairsBit(valueRank);

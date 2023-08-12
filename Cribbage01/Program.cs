@@ -2,10 +2,10 @@
 internal class Program {
     private static void Main() {
         //Game game = new Game();
-        //game.Run();
+        Game.Run();
         //var watch = System.Diagnostics.Stopwatch.StartNew();
-        //GenerateDiscardList generateDiscardList = new GenerateDiscardList();
-        //generateDiscardList.Run4Proper();
+        //GenerateDiscardList generateDiscardList = new();
+        //generateDiscardList.Run6Proper();
         //generateDiscardList.Run4ProperBitwise();
 
         //watch.Stop();
@@ -14,20 +14,19 @@ internal class Program {
 
         //TestScore testScore = new TestScore();
         //testScore.Run();
-        var summary = BenchmarkRunner.Run<TestScore>();
+        //var summary = BenchmarkRunner.Run<TestScore>();
     }
 }
 
 public class Game {
     public Game() { }
 
-    public void Run() {
-        Random random = new Random();
-        Deck deck = new Deck();
-        Player player1 = new Player();
-        Player player2 = new Player();
-        Hand crib = new Hand();
-        Card? cutCard = null;
+    public static void Run() {
+        Random random = new();
+        Deck deck = new();
+        Player player1 = new();
+        Player player2 = new();
+        Hand crib = new();
         IDictionary<ScoreType, int> crScore = new Dictionary<ScoreType, int>();
 
         // for (int looper = 0; looper < 10; looper++) {
@@ -50,7 +49,7 @@ public class Game {
         crib.AddCards(player2.discards);
 
         Console.WriteLine("Cut Card:");
-        cutCard = deck.PullCard(random.Next(deck.cards.Count));
+        Card? cutCard = deck.PullCard(random.Next(deck.cards.Count));
         cutCard.ShowCard();
         cutCard.isCut = true;
         Console.WriteLine();

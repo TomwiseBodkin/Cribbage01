@@ -70,7 +70,7 @@ public static class BitOps {
         while (value != 0) {
 
             // Reduce length of every sequence of 1s by one.
-            value = (value & (value << 1));
+            value &= (value << 1);
 
             count++;
         }
