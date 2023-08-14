@@ -10,7 +10,7 @@ public static class Score {
     public static IDictionary<ScoreType, int> ScoreHandFast(List<Card> cards, Card cutCard) {
         Hand combo = new Hand();
         for (int i = 0; i < cards.Count; i++) {
-            combo.cards.Add(cards[i]);
+            combo.Cards.Add(cards[i]);
         }
         return ScoreHandFast(combo, cutCard);
     }
@@ -23,14 +23,14 @@ public static class Score {
 
         if (hand != null) {
             testBit = hand.HandBits();
-            for (int i = 0; i < hand.cards.Count; i++) {
-                combo.cards.Add(hand.cards[i]);
+            for (int i = 0; i < hand.Cards.Count; i++) {
+                combo.Cards.Add(hand.Cards[i]);
             }
             if (hand.isCrib)
                 combo.isCrib = true;
         }
         if (cutCard != null) {
-            combo.cards.Add(cutCard);
+            combo.Cards.Add(cutCard);
             testBitCut = cutCard.BitMask;
         }
         testBitC = combo.HandBits();
@@ -56,13 +56,13 @@ public static class Score {
         if (hand != null) {
             if (hand.isCrib) {
                 if (BitOps.IsSingleSuit(testBitC)) {
-                    score[ScoreType.Flush] = combo.cards.Count;
+                    score[ScoreType.Flush] = combo.Cards.Count;
                 }
             } else {
                 if (BitOps.IsSingleSuit(testBitC)) {
-                    score[ScoreType.Flush] = combo.cards.Count;
+                    score[ScoreType.Flush] = combo.Cards.Count;
                 } else if (BitOps.IsSingleSuit(testBit)) {
-                    score[ScoreType.Flush] = hand.cards.Count;
+                    score[ScoreType.Flush] = hand.Cards.Count;
                 }
             }
         }
@@ -95,14 +95,14 @@ public static class Score {
 
         if (hand != null) {
             testBit = hand.HandBits();
-            for (int i = 0; i < hand.cards.Count; i++) {
-                combo.cards.Add(hand.cards[i]);
+            for (int i = 0; i < hand.Cards.Count; i++) {
+                combo.Cards.Add(hand.Cards[i]);
             }
             if (hand.isCrib)
                 combo.isCrib = true;
         }
         if (cutCard != null) {
-            combo.cards.Add(cutCard);
+            combo.Cards.Add(cutCard);
             testBitCut = cutCard.BitMask;
         }
         var testBitC = combo.HandBits();
@@ -122,13 +122,13 @@ public static class Score {
         if (hand != null) {
             if (hand.isCrib) {
                 if (BitOps.IsSingleSuit(testBitC)) {
-                    score += combo.cards.Count;
+                    score += combo.Cards.Count;
                 }
             } else {
                 if (BitOps.IsSingleSuit(testBitC)) {
-                    score += combo.cards.Count;
+                    score += combo.Cards.Count;
                 } else if (BitOps.IsSingleSuit(testBit)) {
-                    score += hand.cards.Count;
+                    score += hand.Cards.Count;
                 }
             }
         }
@@ -201,10 +201,10 @@ public static class Score {
 
     public static IDictionary<ScoreType, int> ScoreHandSimple(Hand hand, Card cutCard) {
         Hand combo = new Hand();
-        for (int i = 0; i < hand.cards.Count; i++) {
-            combo.cards.Add(hand.cards[i]);
+        for (int i = 0; i < hand.Cards.Count; i++) {
+            combo.Cards.Add(hand.Cards[i]);
         }
-        combo.cards.Add(cutCard);
+        combo.Cards.Add(cutCard);
         return ScoreHandSimple(combo);
     }
 
@@ -219,9 +219,9 @@ public static class Score {
         score.Add(ScoreType.Nobs, 0);
 
         // score pairs
-        for (int i = 0; i < hand.cards.Count; i++) {
-            for (int j = i + 1; j < hand.cards.Count; j++) {
-                if (hand.cards[j].OrdinalVal == hand.cards[i].OrdinalVal) {
+        for (int i = 0; i < hand.Cards.Count; i++) {
+            for (int j = i + 1; j < hand.Cards.Count; j++) {
+                if (hand.Cards[j].OrdinalVal == hand.Cards[i].OrdinalVal) {
                     score[ScoreType.Pair] += 2;
                     // Console.WriteLine($"Pair for {score[ScoreType.Pair]}");
                 }
@@ -229,7 +229,7 @@ public static class Score {
         }
 
         // score fifteens
-        List<List<Card>> cardCombos = GetAllCombos(hand.cards);
+        List<List<Card>> cardCombos = GetAllCombos(hand.Cards);
         for (int i = 0; i < cardCombos.Count; i++) {
             if (cardCombos[i].Count > 1 && cardCombos[i].Sum(x => x.FaceValue) == 15) {
                 score[ScoreType.Fifteen] += 2;
@@ -239,7 +239,7 @@ public static class Score {
         }
 
         // score runs
-        cardCombos = GetAllCombos(hand.cards); // repopulate the combo lists
+        cardCombos = GetAllCombos(hand.Cards); // repopulate the combo lists
         cardCombos = cardCombos.OrderByDescending(x => x.Count).ToList();
         for (int i = 0; i < cardCombos.Count; i++) {
             bool straightRun = true;
@@ -270,16 +270,16 @@ public static class Score {
         // score flushes
         int flushCnt = 0;
         SuitValue? suitValue = null;
-        for (int i = 0; i < hand.cards.Count; i++) {
-            if (!hand.cards[i].isCut) {
-                suitValue = hand.cards[i].Suit;
+        for (int i = 0; i < hand.Cards.Count; i++) {
+            if (!hand.Cards[i].isCut) {
+                suitValue = hand.Cards[i].Suit;
                 break;
             }
         }
 
-        for (int j = 0; j < hand.cards.Count; j++) {
-            if (!hand.cards[j].isCut) {
-                if (!hand.cards[j].Suit.Equals(suitValue)) {
+        for (int j = 0; j < hand.Cards.Count; j++) {
+            if (!hand.Cards[j].isCut) {
+                if (!hand.Cards[j].Suit.Equals(suitValue)) {
                     flushCnt = 0;
                     break;
                 } else {
@@ -288,9 +288,9 @@ public static class Score {
             }
         }
         if (flushCnt > 0) {
-            for (int i = 0; i < hand.cards.Count; i++) {
-                if (hand.cards[i].isCut) {
-                    if (hand.cards[i].Suit.Equals(suitValue)) {
+            for (int i = 0; i < hand.Cards.Count; i++) {
+                if (hand.Cards[i].isCut) {
+                    if (hand.Cards[i].Suit.Equals(suitValue)) {
                         flushCnt++;
                     } else if (hand.isCrib) {
                         flushCnt = 0;
@@ -303,14 +303,14 @@ public static class Score {
 
         // score nobs
         SuitValue? nobSuit = null;
-        for (int i = 0; i < hand.cards.Count; i++) {
-            if (hand.cards[i].isCut) {
-                nobSuit = hand.cards[i].Suit;
+        for (int i = 0; i < hand.Cards.Count; i++) {
+            if (hand.Cards[i].isCut) {
+                nobSuit = hand.Cards[i].Suit;
             }
         }
         if (nobSuit is SuitValue) {
-            for (int i = 0; i < hand.cards.Count; i++) {
-                if (!hand.cards[i].isCut && hand.cards[i].OrdinalVal == Ordinal.Jack && hand.cards[i].Suit == nobSuit) {
+            for (int i = 0; i < hand.Cards.Count; i++) {
+                if (!hand.Cards[i].isCut && hand.Cards[i].OrdinalVal == Ordinal.Jack && hand.Cards[i].Suit == nobSuit) {
                     // Console.WriteLine($"One for his Nobs! {hand.cards[i].ToString()}");
                     score[ScoreType.Nobs] += 1;
                 }
@@ -325,7 +325,7 @@ public static class Score {
     public static int ScoreRuns(Hand hand) {
         // score runs
         var runScore = 0;
-        var cardCombos = GetAllCombos(hand.cards); // repopulate the combo lists
+        var cardCombos = GetAllCombos(hand.Cards); // repopulate the combo lists
         cardCombos = cardCombos.OrderByDescending(x => x.Count).ToList();
         for (int i = 0; i < cardCombos.Count; i++) {
             bool straightRun = true;
@@ -353,7 +353,7 @@ public static class Score {
         return runScore;
     }
 
-    public static int ScoreRunsBits(ulong value) { // pass Handbits => grouped by suit, Handbits2 => grouped by rank
+    public static int ScoreRunsBits(ulong value) { // pass Handbits => grouped by suit
         var shortValue = BitOps.FlattenOR16(value);
         var runScore = 0;
 
@@ -363,8 +363,12 @@ public static class Score {
             var numCardsByRank = CountPairsBit(valueRank);
             numCardsByRank.Add(0); // tack a final zero to ensure that the total score is tallied.
             var count = 0;
-            var tmpScore = 1;
-            var tmpScore2 = 0;
+            var tmpScore = 1; // multiplier by number of a particular rank (e.g., double runs, double double runs, etc)
+            var tmpScore2 = 0; // additive part by number of cards in each straight
+            // total score is product of tmpScore and tmpScore2 (e.g., for AA23 double run, tmpScore is 2 (1 * 2 * 1 * 1) and tmpScore2 is 3 
+            // (0 + 1 + 1 + 1), so total score for double run (not counting pair) is 6 (A23 + A23).
+            // For double double run (e.g., TTJJQ), tmpScore2 is 4 (1 * 2 * 2 * 1) and tmpScore2 is 3 (0 + 1 + 1 + 1), so total run score
+            // (again, not counting pairs) is 12. Pairs, scored separately, bring it to 16 as exected.
             for (int i = 0; i < numCardsByRank.Count; i++) {
                 if (numCardsByRank[i] == 0) {
                     if (count >= 3) {
@@ -388,9 +392,9 @@ public static class Score {
 
     public static int ScorePairs(Hand hand) {
         var score = 0;
-        for (int i = 0; i < hand.cards.Count; i++) {
-            for (int j = i + 1; j < hand.cards.Count; j++) {
-                if (hand.cards[j].OrdinalVal == hand.cards[i].OrdinalVal) {
+        for (int i = 0; i < hand.Cards.Count; i++) {
+            for (int j = i + 1; j < hand.Cards.Count; j++) {
+                if (hand.Cards[j].OrdinalVal == hand.Cards[i].OrdinalVal) {
                     score += 2;
                     // Console.WriteLine($"Pair for 2");
                 }
@@ -434,7 +438,7 @@ public static class Score {
 
     public static int ScoreFifteens(Hand hand) {
         var score = 0;
-        List<List<Card>> cardCombos = GetAllCombos(hand.cards);
+        List<List<Card>> cardCombos = GetAllCombos(hand.Cards);
         for (int i = 0; i < cardCombos.Count; i++) {
             if (cardCombos[i].Count > 1 && cardCombos[i].Sum(x => x.FaceValue) == 15) {
                 score += 2;

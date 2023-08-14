@@ -100,7 +100,7 @@ public class GenerateDiscardList {
 
 
         // deck.ShowCards();
-        for (int i = 0; i < deck.cards.Count / 4; i++) {
+        for (int i = 0; i < deck.Cards.Count / 4; i++) {
             for (int j = 0; j <= i; j++) {
                 scores.Add(0.0);
                 count.Add(0);
@@ -121,42 +121,42 @@ public class GenerateDiscardList {
         deck.ShowCards();
 
         for (int i = 0; i < 13; i++) {
-            calcHand.AddCard(deck.cards[i]);
+            calcHand.AddCard(deck.Cards[i]);
             for (int j = 13; j < 26; j++) {
                 if (i == j)
                     continue;
-                calcHand.AddCard(deck.cards[j]);
-                for (int k = 0; k < deck.cards.Count; k++) {
+                calcHand.AddCard(deck.Cards[j]);
+                for (int k = 0; k < deck.Cards.Count; k++) {
                     if (i == k || j == k)
                         continue;
-                    calcHand.AddCard(deck.cards[k]);
-                    for (int m = 0; m < deck.cards.Count; m++) {
+                    calcHand.AddCard(deck.Cards[k]);
+                    for (int m = 0; m < deck.Cards.Count; m++) {
                         if (i == m || j == m || k == m)
                             continue;
-                        calcHand.AddCard(deck.cards[m]);
-                        for (int n = m + 1; n < deck.cards.Count; n++) {
+                        calcHand.AddCard(deck.Cards[m]);
+                        for (int n = m + 1; n < deck.Cards.Count; n++) {
                             if (i == n || j == n || k == n || m == n)
                                 continue;
-                            cutCard = deck.cards[n];
+                            cutCard = deck.Cards[n];
                             cutCard.isCut = true;
                             // Console.WriteLine(calcHand.cards.Count);
                             pScore = Score.ScoreHandFaster(calcHand, cutCard);
                             cutCard.isCut = false;
-                            if ((int)deck.cards[j].OrdinalVal > (int)deck.cards[i].OrdinalVal) {
-                                allScores[(int)deck.cards[j].OrdinalVal][(int)deck.cards[i].OrdinalVal] += pScore;
-                                allCounts[(int)deck.cards[j].OrdinalVal][(int)deck.cards[i].OrdinalVal]++;
+                            if ((int)deck.Cards[j].OrdinalVal > (int)deck.Cards[i].OrdinalVal) {
+                                allScores[(int)deck.Cards[j].OrdinalVal][(int)deck.Cards[i].OrdinalVal] += pScore;
+                                allCounts[(int)deck.Cards[j].OrdinalVal][(int)deck.Cards[i].OrdinalVal]++;
                             } else {
-                                allScores[(int)deck.cards[i].OrdinalVal][(int)deck.cards[j].OrdinalVal] += pScore;
-                                allCounts[(int)deck.cards[i].OrdinalVal][(int)deck.cards[j].OrdinalVal]++;
+                                allScores[(int)deck.Cards[i].OrdinalVal][(int)deck.Cards[j].OrdinalVal] += pScore;
+                                allCounts[(int)deck.Cards[i].OrdinalVal][(int)deck.Cards[j].OrdinalVal]++;
                             }
                         }
-                        calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                        calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
                     }
-                    calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                    calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
                 }
-                calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
             }
-            calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+            calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
             Console.Clear();
             ListOut.PrintSparseInt(allScores);
             ListOut.PrintSparseInt(allCounts);
@@ -184,43 +184,43 @@ public class GenerateDiscardList {
         List<double> scores = new();
         List<double> avgScores = new();
 
-        for (int i = 0; i < deck.cards.Count / 4; i++) {
+        for (int i = 0; i < deck.Cards.Count / 4; i++) {
             scores.Add(0.0);
             count.Add(0);
             avgScores.Add(0.0);
         }
 
 
-        for (int i = 0; i < deck.cards.Count; i++) {
-            calcHand.AddCard(deck.cards[i]);
-            for (int j = 0; j < deck.cards.Count; j++) {
+        for (int i = 0; i < deck.Cards.Count; i++) {
+            calcHand.AddCard(deck.Cards[i]);
+            for (int j = 0; j < deck.Cards.Count; j++) {
                 if (i == j)
                     continue;
-                calcHand.AddCard(deck.cards[j]);
-                for (int k = 0; k < deck.cards.Count; k++) {
+                calcHand.AddCard(deck.Cards[j]);
+                for (int k = 0; k < deck.Cards.Count; k++) {
                     if (i == k || j == k)
                         continue;
-                    calcHand.AddCard(deck.cards[k]);
-                    for (int m = 0; m < deck.cards.Count; m++) {
+                    calcHand.AddCard(deck.Cards[k]);
+                    for (int m = 0; m < deck.Cards.Count; m++) {
                         if (i == m || j == m || k == m)
                             continue;
-                        calcHand.AddCard(deck.cards[m]);
-                        for (int n = 0; n < deck.cards.Count; n++) {
+                        calcHand.AddCard(deck.Cards[m]);
+                        for (int n = 0; n < deck.Cards.Count; n++) {
                             if (i == n || j == n || k == n || m == n)
                                 continue;
-                            cutCard = deck.cards[n];
+                            cutCard = deck.Cards[n];
                             // Console.WriteLine(calcHand.cards.Count);
                             pScore = Score.ScoreHandFaster(calcHand, cutCard);
-                            scores[(int)deck.cards[i].OrdinalVal] += pScore;
-                            count[(int)deck.cards[i].OrdinalVal]++;
+                            scores[(int)deck.Cards[i].OrdinalVal] += pScore;
+                            count[(int)deck.Cards[i].OrdinalVal]++;
                         }
-                        calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                        calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
                     }
-                    calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                    calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
                 }
-                calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
             }
-            calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+            calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
             Console.Clear();
             Console.WriteLine(string.Join(",", scores.Select(n => n.ToString("F2"))));
             Console.WriteLine(string.Join(",", count));
@@ -280,41 +280,41 @@ public class GenerateDiscardList {
 
 
         for (int g = 0; g < 13; g++) {
-            calcHand.AddCard(deck.cards[g]);
+            calcHand.AddCard(deck.Cards[g]);
             for (int i = 13; i < 26; i++) {
                 if (i == g)
                     continue;
-                calcHand.AddCard(deck.cards[i]);
+                calcHand.AddCard(deck.Cards[i]);
                 for (int j = 26; j <= 39; j++) {
                     if (j == g || j == i)
                         continue;
-                    calcHand.AddCard(deck.cards[j]);
-                    for (int k = 0; k < deck.cards.Count; k++) {
+                    calcHand.AddCard(deck.Cards[j]);
+                    for (int k = 0; k < deck.Cards.Count; k++) {
                         if (k == g || k == i || k == j)
                             continue;
-                        calcHand.AddCard(deck.cards[k]);
-                        for (int m = 0; m < deck.cards.Count; m++) {
+                        calcHand.AddCard(deck.Cards[k]);
+                        for (int m = 0; m < deck.Cards.Count; m++) {
                             if (m == g || m == i || m == j || m == k)
                                 continue;
-                            calcHand.AddCard(deck.cards[m]);
-                            for (int n = 0; n < deck.cards.Count; n++) {
+                            calcHand.AddCard(deck.Cards[m]);
+                            for (int n = 0; n < deck.Cards.Count; n++) {
                                 if (n == g || n == i || n == j || n == k || n == m)
                                     continue;
-                                calcHand.AddCard(deck.cards[n]);
-                                for (int o = 0; o < deck.cards.Count; o++) {
+                                calcHand.AddCard(deck.Cards[n]);
+                                for (int o = 0; o < deck.Cards.Count; o++) {
                                     if (o == g || o == i || o == j || o == k || o == m || o == n)
                                         continue;
-                                    cutCard = deck.cards[n];
+                                    cutCard = deck.Cards[n];
                                     cutCard.isCut = true;
                                     // Console.WriteLine(calcHand.cards.Count);
                                     pScore = Score.ScoreHandFaster(calcHand, cutCard);
                                     cutCard.isCut = false;
-                                    if ((int)deck.cards[j].OrdinalVal > (int)deck.cards[i].OrdinalVal) {
-                                        gp3Scores[(int)deck.cards[g].OrdinalVal][(int)deck.cards[j].OrdinalVal][(int)deck.cards[i].OrdinalVal] += pScore;
-                                        gp3Count[(int)deck.cards[g].OrdinalVal][(int)deck.cards[j].OrdinalVal][(int)deck.cards[i].OrdinalVal]++;
+                                    if ((int)deck.Cards[j].OrdinalVal > (int)deck.Cards[i].OrdinalVal) {
+                                        gp3Scores[(int)deck.Cards[g].OrdinalVal][(int)deck.Cards[j].OrdinalVal][(int)deck.Cards[i].OrdinalVal] += pScore;
+                                        gp3Count[(int)deck.Cards[g].OrdinalVal][(int)deck.Cards[j].OrdinalVal][(int)deck.Cards[i].OrdinalVal]++;
                                     } else {
-                                        gp3Scores[(int)deck.cards[g].OrdinalVal][(int)deck.cards[i].OrdinalVal][(int)deck.cards[j].OrdinalVal] += pScore;
-                                        gp3Count[(int)deck.cards[g].OrdinalVal][(int)deck.cards[i].OrdinalVal][(int)deck.cards[j].OrdinalVal]++;
+                                        gp3Scores[(int)deck.Cards[g].OrdinalVal][(int)deck.Cards[i].OrdinalVal][(int)deck.Cards[j].OrdinalVal] += pScore;
+                                        gp3Count[(int)deck.Cards[g].OrdinalVal][(int)deck.Cards[i].OrdinalVal][(int)deck.Cards[j].OrdinalVal]++;
                                     }
                                     totalCount++;
                                     if (totalCount % 5085024 == 0) {
@@ -323,17 +323,17 @@ public class GenerateDiscardList {
                                         ListOut.PrintSparseInt3(gp3Count);
                                     }
                                 }
-                                calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                                calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
                             }
-                            calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                            calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
                         }
-                        calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                        calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
                     }
-                    calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                    calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
                 }
-                calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+                calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
             }
-            calcHand.cards.RemoveAt(calcHand.cards.Count - 1);
+            calcHand.Cards.RemoveAt(calcHand.Cards.Count - 1);
             Console.Clear();
             ListOut.PrintSparseInt3(gp3Scores);
             ListOut.PrintSparseInt3(gp3Count);

@@ -103,10 +103,10 @@
 }
 
 public class Hand {
-    public List<Card> cards { get; set; } = new List<Card>();
+    public List<Card> Cards { get; set; } = new();
     public bool isCrib { get; set; } = false;
     public void AddCard(Card card) {
-        cards.Add(card);
+        Cards.Add(card);
     }
     public void AddCards(List<Card> addCards) {
         foreach (Card card0 in addCards) {
@@ -115,18 +115,18 @@ public class Hand {
     }
     public void PutCard(Card card, int i) {
         // need to ensure that cards.Count is > 0 or return null
-        if (i < 0 || i > cards.Count) {
+        if (i < 0 || i > Cards.Count) {
             i = 0;
         }
-        cards.Insert(i, card);
+        Cards.Insert(i, card);
     }
     public Card PullCard(int i) {
         // need to ensure that cards.Count is > 0 or return null
-        if (i < 0 || i >= cards.Count) {
+        if (i < 0 || i >= Cards.Count) {
             i = 0;
         }
-        Card tempCard = cards[i];
-        cards.RemoveAt(i);
+        Card tempCard = Cards[i];
+        Cards.RemoveAt(i);
         return tempCard;
     }
     public List<Card> PullCards(int i) {
@@ -141,16 +141,16 @@ public class Hand {
     }
 
     public void SortCards() {
-        cards = cards.OrderBy(s => s.OrdinalVal).ThenBy(s => s.Suit).ToList();
+        Cards = Cards.OrderBy(s => s.OrdinalVal).ThenBy(s => s.Suit).ToList();
     }
 
     public void SortCardsSuit() {
-        cards = cards.OrderBy(s => s.Suit).ThenBy(s => s.OrdinalVal).ToList();
+        Cards = Cards.OrderBy(s => s.Suit).ThenBy(s => s.OrdinalVal).ToList();
     }
 
     public void ShowCards() {
         int i = 0;
-        foreach (Card card in cards) {
+        foreach (Card card in Cards) {
             Console.ForegroundColor = card.cardColor();
             Console.BackgroundColor = ConsoleColor.White;
             Console.Write(card.ToString());
@@ -165,7 +165,7 @@ public class Hand {
     // 64-bit int grouped by suit
     public ulong HandBits() {
         ulong total = 0UL;
-        foreach (Card card in cards) {
+        foreach (Card card in Cards) {
             total |= card.BitMask;
         }
         return total;
@@ -174,7 +174,7 @@ public class Hand {
     // 64-bit int grouped by rank
     public ulong HandBitsRank() {
         ulong total = 0UL;
-        foreach (Card card in cards) {
+        foreach (Card card in Cards) {
             total |= card.BitMaskRank;
         }
         return total;
@@ -187,25 +187,29 @@ public class Hand {
 
 public class Deck : Hand {
     public Deck() {
-        if (cards is not null) {
+        if (Cards is not null) {
             foreach (SuitValue suits in Enum.GetValues(typeof(SuitValue))) {
                 foreach (Ordinal face in Enum.GetValues(typeof(Ordinal))) {
-                    cards.Add(new Card(suits, face));
+                    Cards.Add(new Card(suits, face));
                 }
             }
         }
     }
 
+    public void ShuffleDeck() {
+        ShuffleDeck(1);
+    }
+
     public void ShuffleDeck(int numTimes) {
         while (numTimes-- > 0) {
-            if (cards is not null) {
+            if (Cards is not null) {
                 Random random = new Random();
-                int count = cards.Count;
+                int count = Cards.Count;
                 for (int i = 0; i < (count - 1); i++) {
                     int r = i + random.Next(count - i);
-                    Card tempCard = cards[r];
-                    cards[r] = cards[i];
-                    cards[i] = tempCard;
+                    Card tempCard = Cards[r];
+                    Cards[r] = Cards[i];
+                    Cards[i] = tempCard;
                 }
             }
         }

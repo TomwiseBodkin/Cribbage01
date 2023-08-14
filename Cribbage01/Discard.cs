@@ -229,7 +229,7 @@ public static class Discard {
 
         };
 
-        List<List<Card>> cardCombos = Score.GetAllCombos(player.hand.cards);
+        List<List<Card>> cardCombos = Score.GetAllCombos(player.hand.Cards);
 
         Array values = Enum.GetValues(typeof(SuitValue));
         List<Card> testCutCards = new List<Card>();
@@ -248,7 +248,7 @@ public static class Discard {
                     avgScore += toCribScore[ScoreType.Total];
                 }
                 avgScore /= testCutCards.Count;
-                List<Card> tmpCribCards = player.hand.cards.Except(cardCombos[i]).ToList();
+                List<Card> tmpCribCards = player.hand.Cards.Except(cardCombos[i]).ToList();
                 tmpCribCards.Sort((x, y) => x.OrdinalVal.CompareTo(y.OrdinalVal));
                 // compare and rank potential hands of the same score range
                 // add something to look at the crib cards: don't want to 
@@ -289,11 +289,11 @@ public static class Discard {
         List<Card> finalCrib = potentialCribs.OrderByDescending(o => o.Value).First().Key;
         double finalCribScore = potentialCribs.OrderByDescending(o => o.Value).First().Value;
 
-        player.hand.cards.Sort((x, y) => x.OrdinalVal.CompareTo(y.OrdinalVal));
+        player.hand.Cards.Sort((x, y) => x.OrdinalVal.CompareTo(y.OrdinalVal));
         // Console.WriteLine($"Best score: {finalCribScore:F2} for {string.Join(",", DealtHand.cards)} " + $"=> {string.Join(",", finalCrib)}");
 
         foreach (Card cCard in finalCrib) {
-            player.hand.cards.Remove(cCard);
+            player.hand.Cards.Remove(cCard);
             cribCards.Add(cCard);
         }
 
