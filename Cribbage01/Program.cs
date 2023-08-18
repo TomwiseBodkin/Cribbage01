@@ -1,16 +1,16 @@
 ﻿using BenchmarkDotNet.Running;
 internal class Program {
     private static void Main() {
-        Game game = new Game();
-        game.Run();
-        //var watch = System.Diagnostics.Stopwatch.StartNew();
-        //GenerateDiscardList generateDiscardList = new();
+        //Game game = new Game();
+        //game.Run();
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        GenerateDiscardList generateDiscardList = new();
         //generateDiscardList.Run6Proper();
-        //generateDiscardList.Run4ProperBitwise();
+        generateDiscardList.Run4ProperBitwise();
 
-        //watch.Stop();
-        //var elapsedTime = watch.Elapsed;
-        //Console.WriteLine(elapsedTime.ToString());
+        watch.Stop();
+        var elapsedTime = watch.Elapsed;
+        Console.WriteLine(elapsedTime.ToString());
 
         //TestScore testScore = new TestScore();
         //testScore.Run();
@@ -56,20 +56,17 @@ public class Game {
         Console.WriteLine();
 
         Console.WriteLine($"{player1.Name} hand:" + (player1.isDealer ? "*" : ""));
-        player1.SortCards();
         player1.ShowCards();
         player1.PointsScored(Score.ScoreHandFast(player1.hand, cutCard));
         Console.WriteLine($"{player1.Name} score: {player1.totalScore}");
         Console.WriteLine();
 
         Console.WriteLine($"{player2.Name} hand:" + (player2.isDealer ? "*" : ""));
-        player2.SortCards();
         player2.ShowCards();
         player2.PointsScored(Score.ScoreHandFast(player2.hand, cutCard));
         Console.WriteLine($"{player2.Name} score: {player2.totalScore}");
         Console.WriteLine();
         Console.WriteLine("Crib:");
-        crib.SortCards();
         crib.ShowCards();
         Console.WriteLine();
         crScore = Score.ScoreHandFast(crib, cutCard);

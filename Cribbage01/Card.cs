@@ -149,6 +149,7 @@ public class Hand {
     }
 
     public void ShowCards() {
+        SortCards();
         int i = 0;
         foreach (Card card in Cards) {
             Console.ForegroundColor = card.cardColor();
@@ -183,7 +184,6 @@ public class Hand {
 
 
 }
-
 
 public class Deck : Hand {
     public Deck() {

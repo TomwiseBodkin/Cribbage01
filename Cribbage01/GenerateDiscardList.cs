@@ -42,7 +42,6 @@ public class GenerateDiscardList {
                 if ((card2Bits ^ card1Bits) == 0) {
                     continue;
                 }
-                //ListOut.BitHandRankOut(card1Bits | card2Bits);
                 for (int k = 0; k < 52; k++) {
                     card3Bits = 1UL << (k % 13) << (k / 13) * 16;
                     if (((card3Bits ^ card1Bits) == 0) || ((card3Bits ^ card2Bits) == 0)) {
@@ -53,7 +52,7 @@ public class GenerateDiscardList {
                         if (((card4Bits ^ card1Bits) == 0) || ((card4Bits ^ card2Bits) == 0) || ((card4Bits ^ card3Bits) == 0)) {
                             continue;
                         }
-                        for (int m = 0; m < 52;  m++) {
+                        for (int m = 0; m < 52; m++) {
                             card5Bits = 1UL << (m % 13) << (m / 13) * 16;
                             if (((card5Bits ^ card1Bits) == 0) || ((card5Bits ^ card2Bits) == 0) || ((card5Bits ^ card3Bits) == 0) || ((card5Bits ^ card4Bits) == 0)) {
                                 continue;
@@ -69,6 +68,133 @@ public class GenerateDiscardList {
                         }
                     }
                 }
+            }
+            Console.Clear();
+            ListOut.PrintSparseInt(allScores);
+            ListOut.PrintSparseInt(allCounts);
+        }
+        int totalCount = 0;
+        for (int i = 0; i < allScores.Count; i++) {
+            for (int j = 0; j < allScores[i].Count; j++) {
+                allAvgScores[i][j] = (double)allScores[i][j] / (double)allCounts[i][j];
+                totalCount += allCounts[i][j];
+            }
+        }
+        ListOut.PrintSparse(allAvgScores);
+        Console.WriteLine(totalCount);
+
+    }
+
+    public void Run4ProperBitwise2() { // too slow
+        int pScore;
+        List<int> count = new();
+        List<double> scores = new();
+        List<List<int>> allCounts = new();
+        List<List<int>> allScores = new();
+        List<List<double>> allAvgScores = new();
+        ulong card1Bits;
+        ulong card2Bits;
+        ulong card3Bits;
+        ulong card4Bits;
+        ulong card5Bits;
+
+        // deck.ShowCards();
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j <= i; j++) {
+                scores.Add(0.0);
+                count.Add(0);
+            }
+            List<double> tmpAvgScore = new(scores);
+            List<int> tmpCount = new(count);
+            List<int> tmpScore = new(count);
+            allScores.Add(tmpScore);
+            allAvgScores.Add(tmpAvgScore);
+            allCounts.Add(tmpCount);
+            scores.Clear();
+            count.Clear();
+        }
+        Console.Clear();
+        ListOut.PrintSparseInt(allScores);
+        ListOut.PrintSparseInt(allCounts);
+
+        card1Bits = 1UL;
+        for (int i = 0; i < 52; i++) {
+            card2Bits = 1UL;
+            for (int j = 0; j < 52; j++) {
+                if ((card2Bits ^ card1Bits) == 0) {
+                    if ((j + 1) % 13 == 0) {
+                        card2Bits <<= 4;
+                    } else {
+                        card2Bits <<= 1;
+                    }
+                    continue;
+                }
+                card3Bits = 1UL;
+                for (int k = 0; k < 52; k++) {
+                    if (((card3Bits ^ card1Bits) == 0) || ((card3Bits ^ card2Bits) == 0)) {
+                        if ((k + 1) % 13 == 0) {
+                            card3Bits <<= 4;
+                        } else {
+                            card3Bits <<= 1;
+                        }
+                        continue;
+                    }
+                    card4Bits = 1UL;
+                    for (int l = 0; l < 52; l++) {
+                        if (((card4Bits ^ card1Bits) == 0) || ((card4Bits ^ card2Bits) == 0) || ((card4Bits ^ card3Bits) == 0)) {
+                            if ((l + 1) % 13 == 0) {
+                                card4Bits <<= 4;
+                            } else {
+                                card4Bits <<= 1;
+                            }
+                            continue;
+                        }
+                        card5Bits = 1UL;
+                        for (int m = 0; m < 52; m++) {
+                            if (((card5Bits ^ card1Bits) == 0) || ((card5Bits ^ card2Bits) == 0) || ((card5Bits ^ card3Bits) == 0) || ((card5Bits ^ card4Bits) == 0)) {
+                                if ((m + 1) % 13 == 0) {
+                                    card5Bits <<= 4;
+                                } else {
+                                    card5Bits <<= 1;
+                                }
+                                continue;
+                            }
+                            pScore = Score.ScoreHandFasterer((card1Bits | card2Bits | card3Bits | card4Bits), card5Bits, false);
+                            if ((j % 13) > (i % 13)) {
+                                allScores[j % 13][i % 13] += pScore;
+                                allCounts[j % 13][i % 13]++;
+                            } else {
+                                allScores[i % 13][j % 13] += pScore;
+                                allCounts[i % 13][j % 13]++;
+                            }
+                            if ((m + 1) % 13 == 0) {
+                                card5Bits <<= 4;
+                            } else {
+                                card5Bits <<= 1;
+                            }
+                        }
+                        if ((l + 1) % 13 == 0) {
+                            card4Bits <<= 4;
+                        } else {
+                            card4Bits <<= 1;
+                        }
+                    }
+                    if ((k + 1) % 13 == 0) {
+                        card3Bits <<= 4;
+                    } else {
+                        card3Bits <<= 1;
+                    }
+                }
+                if ((j + 1) % 13 == 0) {
+                    card2Bits <<= 4;
+                } else {
+                    card2Bits <<= 1;
+                }
+            }
+            if ((i + 1) % 13 == 0) {
+                card1Bits <<= 4;
+            } else {
+                card1Bits <<= 1;
             }
             Console.Clear();
             ListOut.PrintSparseInt(allScores);
@@ -343,7 +469,7 @@ public class GenerateDiscardList {
         for (int i = 0; i < gp3Scores.Count; i++) {
             for (int j = 0; j < gp3Scores[i].Count; j++) {
                 for (int k = 0; k < gp3Scores[i][j].Count; k++) {
-                    gp3Avg[i][j][k] = gp3Scores[i][j][k]/gp3Count[i][j][k];
+                    gp3Avg[i][j][k] = gp3Scores[i][j][k] / gp3Count[i][j][k];
                 }
             }
         }

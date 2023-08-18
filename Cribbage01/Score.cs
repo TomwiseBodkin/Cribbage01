@@ -16,9 +16,8 @@ public static class Score {
     }
     public static IDictionary<ScoreType, int> ScoreHandFast(Hand? hand, Card? cutCard) {
         IDictionary<ScoreType, int> score = new Dictionary<ScoreType, int>();
-        Hand combo = new Hand();
+        Hand combo = new();
         var testBit = 0UL;
-        var testBitC = 0UL;
         var testBitCut = 0UL;
 
         if (hand != null) {
@@ -33,7 +32,7 @@ public static class Score {
             combo.Cards.Add(cutCard);
             testBitCut = cutCard.BitMask;
         }
-        testBitC = combo.HandBits();
+        var testBitC = combo.HandBits();
 
 
         score.Add(ScoreType.Total, 0);
@@ -157,6 +156,7 @@ public static class Score {
         var testBitCRank = BitOps.SuitToRankOrder(testBitC);
         var testBitCut = cutCardBits;
 
+        //ListOut.BitHandRankOut(testBitC);
 
         // score pairs
         score += ScorePairsBit(testBitCRank);
